@@ -1,0 +1,206 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MusicPlayer from '../components/MusicPlayer.astro';
+import Stats from '../components/Stats.astro';
+import { config } from '../data/config';
+---
+
+<Layout
+  title="Once Human — фан-сайт игры: новости, обновления, карта"
+  description={config.description}
+>
+  <Header />
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="container hero__content">
+        <span class="badge">4 сезон уже здесь</span>
+        <h1 class="hero__title">
+          Выживи<br />
+          <span class="hero__accent">в новом мире</span>
+        </h1>
+        <p class="hero__text">
+          Once Human — многопользовательская игра на выживание в открытом мире.
+          Исследуйте разрушенные территории, крафтите оружие и стройте убежища
+          в мире, охваченном загадочным бедствием.
+        </p>
+        <div class="hero__actions">
+          <a href="/download" class="btn btn--primary">Играть бесплатно</a>
+          <a href="#features" class="btn btn--ghost">Узнать больше</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Countdown -->
+    <section class="section countdown" id="countdown">
+      <div class="container">
+        <h2 class="section-title">До обновления</h2>
+        <div class="countdown__grid" data-countdown role="timer" aria-live="polite">
+          <div class="countdown__card"><span class="countdown__num" data-unit="days">--</span><span class="countdown__label">дней</span></div>
+          <div class="countdown__card"><span class="countdown__num" data-unit="hours">--</span><span class="countdown__label">часов</span></div>
+          <div class="countdown__card"><span class="countdown__num" data-unit="minutes">--</span><span class="countdown__label">минут</span></div>
+          <div class="countdown__card"><span class="countdown__num" data-unit="seconds">--</span><span class="countdown__label">секунд</span></div>
+        </div>
+        <div class="countdown__done" hidden>
+          <p>Обновление Колесо видения уже вышло.</p>
+          <a href="/updates/preview_update_s4" class="btn btn--ghost">Что нового?</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Музычка -->
+    <MusicPlayer />
+
+    <!-- Статистика -->
+    <Stats />
+  </main>
+  <Footer />
+</Layout>
+
+<link slot="head" rel="preload" as="image" href="/img/hero.jpg" fetchpriority="high" />
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(var(--overlay), var(--overlay)), url('/img/hero.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+  }
+
+  .hero__content {
+    padding-top: 64px;
+    padding-bottom: 64px;
+    max-width: 760px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--red);
+    color: var(--white);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+
+  .hero__title {
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 20px;
+  }
+
+  .hero__accent {
+    color: var(--accent);
+  }
+
+  .hero__text {
+    font-size: 1.125rem;
+    color: var(--text);
+    max-width: 560px;
+    margin-bottom: 32px;
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .countdown__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    max-width: 640px;
+  }
+
+  .countdown__card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 20px 12px;
+    text-align: center;
+  }
+
+  .countdown__num {
+    display: block;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+    color: var(--white);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .countdown__label {
+    color: var(--muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .countdown__done p {
+    font-size: 1.125rem;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 767px) {
+    .countdown__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<script>
+  import { config } from '../data/config';
+
+  const target = new Date(config.updateDate).getTime();
+  const grid = document.querySelector<HTMLElement>('[data-countdown]');
+  const done = document.querySelector<HTMLElement>('.countdown__done');
+
+  function pad(n: number): string {
+    return String(n).padStart(2, '0');
+  }
+
+  function tick(): void {
+    if (!grid || !done) return;
+    const diff = target - Date.now();
+    if (diff <= 0) {
+      grid.setAttribute('hidden', '');
+      done.removeAttribute('hidden');
+      return;
+    }
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    const set = (unit: string, val: string) => {
+      const el = grid.querySelector(`[data-unit="${unit}"]`);
+      if (el) el.textContent = val;
+    };
+    set('days', String(days));
+    set('hours', pad(hours));
+    set('minutes', pad(minutes));
+    set('seconds', pad(seconds));
+    setTimeout(tick, 500);
+  }
+
+  tick();
+</script>
