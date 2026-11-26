@@ -1,0 +1,190 @@
+---
+const nav = [
+  { href: '/cat/updates', label: 'Обновления' },
+  { href: '/cat/news', label: 'Новости проекта' },
+  { href: '/map', label: 'Карта' },
+];
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="/" class="header__logo" aria-label="Once Human — на главную">
+      <img src="/img/logo.png" alt="Once Human" width="160" height="40" loading="eager" />
+    </a>
+
+    <nav class="header__nav" id="main-nav" aria-label="Основная навигация">
+      <ul class="header__list">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class:list={['header__link', { 'is-active': Astro.url.pathname.startsWith(item.href) }]}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+      <a href="/download" class="btn btn--primary header__cta">Играть бесплатно</a>
+    </nav>
+
+    <button
+      class="header__burger"
+      type="button"
+      aria-expanded="false"
+      aria-controls="main-nav"
+      aria-label="Открыть меню"
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid #ffffff10;
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 72px;
+  }
+
+  .header__logo img {
+    height: 40px;
+    width: auto;
+  }
+
+  .header__nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .header__list {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__link {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--text);
+    transition: color 0.15s ease;
+  }
+
+  .header__link:hover,
+  .header__link.is-active {
+    color: var(--accent);
+  }
+
+  .header__cta {
+    padding: 10px 22px;
+    white-space: nowrap;
+  }
+
+  .header__burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .header__burger span {
+    display: block;
+    height: 2px;
+    background: var(--white);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .header__burger[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .header__burger[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  .header__burger[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  @media (max-width: 767px) {
+    .header__burger {
+      display: flex;
+    }
+
+    .header__nav {
+      position: absolute;
+      top: 72px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 20px 24px;
+      display: none;
+    }
+
+    .header__nav.is-open {
+      display: flex;
+    }
+
+    .header__list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .header__list li {
+      border-bottom: 1px solid #ffffff10;
+    }
+
+    .header__link {
+      display: block;
+      padding: 14px 0;
+    }
+
+    .header__cta {
+      margin-top: 16px;
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  const burger = document.querySelector<HTMLButtonElement>('.header__burger');
+  const nav = document.querySelector<HTMLElement>('.header__nav');
+
+  if (burger && nav) {
+    burger.addEventListener('click', () => {
+      const open = burger.getAttribute('aria-expanded') === 'true';
+      burger.setAttribute('aria-expanded', String(!open));
+      burger.setAttribute('aria-label', open ? 'Открыть меню' : 'Закрыть меню');
+      nav.classList.toggle('is-open', !open);
+    });
+
+    nav.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'A') {
+        burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Открыть меню');
+        nav.classList.remove('is-open');
+      }
+    });
+  }
+</script>

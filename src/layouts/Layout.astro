@@ -1,0 +1,100 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+import '../styles/global.css';
+
+const { title, description, image = '/img/hero.jpg' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+const isDev = Astro.mode === 'development';
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/favicon/favicon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Once Human — фан-сайт" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Шрифты: встроенный Astro Fonts API (fallback на Google Fonts) -->
+    <meta name="font-source" content="local" />
+    <link
+      rel="preload"
+      href="/fonts/gothic-a1.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <style is:global>
+      @font-face {
+        font-family: 'Gothic A1';
+        src: local('Gothic A1'), url('/fonts/gothic-a1.woff2') format('woff2');
+        font-weight: 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Rubik';
+        src: local('Rubik'), url('/fonts/rubik.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Rubik';
+        src: local('Rubik Italic'), url('/fonts/rubik-italic.woff2') format('woff2');
+        font-weight: 400;
+        font-style: italic;
+        font-display: swap;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700&family=Rubik:ital,wght@0,400;1,400&display=swap"
+    />
+  </head>
+  <body>
+    <slot />
+
+    {
+      !isDev && (
+        <script is:inline>
+          (() => {
+            const id = '109128240';
+            (function (m, e, t, r, i, k, a) {
+              m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+              m[i].l = 1 * new Date();
+              for (let j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+              k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a);
+            })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=' + id, 'ym');
+            ym(id, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true });
+          })();
+        </script>
+        <noscript is:inline>
+          <div><img src="https://mc.yandex.ru/watch/109128240" style="position:absolute; left:-9999px;" alt="" /></div>
+        </noscript>
+      )
+    }
+  </body>
+</html>

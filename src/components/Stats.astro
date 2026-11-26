@@ -1,0 +1,106 @@
+---
+const stats = [
+  { value: 20, suffix: ' млн+', label: 'игроков', decimals: 0 },
+  { value: 76.94, suffix: '%', label: 'нравится игрокам', decimals: 2 },
+  { value: 450, suffix: ' km²', label: 'открытый мир', decimals: 0 },
+];
+---
+
+<section class="section stats" id="stats">
+  <div class="container">
+    <ul class="stats__grid" data-stats>
+      {stats.map((s) => (
+        <li class="stats__card">
+          <span class="stats__value"
+                data-value={s.value}
+                data-decimals={s.decimals}>
+            {(s.value).toFixed(s.decimals)}{s.suffix}
+          </span>
+          <span class="stats__label">{s.label}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .stats__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .stats__card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 32px 20px;
+    text-align: center;
+  }
+
+  .stats__value {
+    display: block;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 8px;
+  }
+
+  .stats__label {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 767px) {
+    .stats__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const container = document.querySelector<HTMLElement>('[data-stats]');
+  if (container) {
+    const values = Array.from(container.querySelectorAll<HTMLElement>('[data-value]'));
+
+    function animate(el: HTMLElement): void {
+      const target = Number(el.dataset.value);
+      const decimals = Number(el.dataset.decimals ?? 0);
+      const suffixMatch = el.textContent?.replace(/[-\d.,]/g, '') ?? '';
+      const duration = 1200;
+      const start = performance.now();
+
+      function frame(now: number): void {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = (target * eased).toFixed(decimals) + suffixMatch;
+        if (t < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              values.forEach(animate);
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.4 }
+      );
+      observer.observe(container);
+    } else {
+      values.forEach(animate);
+    }
+  }
+</script>

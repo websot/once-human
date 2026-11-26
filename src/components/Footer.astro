@@ -1,0 +1,80 @@
+---
+const nav = [
+  { href: '/cat/updates', label: 'Обновления' },
+  { href: '/cat/news', label: 'Новости проекта' },
+  { href: '/map', label: 'Карта' },
+];
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <a href="/" class="footer__logo" aria-label="Once Human — на главную">
+      <img src="/img/logo.png" alt="Once Human" width="140" height="35" loading="lazy" />
+    </a>
+
+    <nav class="footer__nav" aria-label="Навигация в подвале">
+      <ul class="footer__list">
+        {nav.map((item) => (
+          <li><a href={item.href} class="footer__link">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <p class="footer__copy">© 2026 once-human.ru. Неофициальный фан-сайт</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--card-border);
+    background: var(--bg-2);
+    padding: 40px 0;
+  }
+
+  .footer__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .footer__logo img {
+    height: 35px;
+    width: auto;
+  }
+
+  .footer__list {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+
+  .footer__link {
+    color: var(--muted);
+    transition: color 0.15s ease;
+  }
+
+  .footer__link:hover {
+    color: var(--accent);
+  }
+
+  .footer__copy {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  @media (max-width: 767px) {
+    .footer__inner {
+      flex-direction: column;
+      text-align: center;
+    }
+    .footer__list {
+      justify-content: center;
+    }
+  }
+</style>
